@@ -72,6 +72,16 @@ def make_data_array(data_file):
     return data
 
 
+# function to keep 200 as 200 and change 1.7k --> 1,700 and 16.2m --> 16,200,000
+def parse_count(text_number):
+    tens = {"K": 1000, "M": 1000000}
+    text_number = text_number.upper()
+    if (text_number[-1] == "K") or (text_number[-1] == "M"):
+        return int(float(text_number[:-1]) * tens[text_number[-1]])
+    else:
+        return int(text_number)
+
+
 def full_function(path_to_data_file, path_to_write_to):
     data_array = make_data_array(path_to_data_file)
     site_array = data_array.copy()
@@ -90,8 +100,10 @@ def full_function(path_to_data_file, path_to_write_to):
             by=By.XPATH,
             value="/html/body/ytd-app/div[1]/ytd-page-manager/ytd-browse/div[3]/ytd-c4-tabbed-header-renderer/tp-yt-app-header-layout/div/tp-yt-app-header/div[2]/div[2]/div/div[1]/div/div[1]/yt-formatted-string",
         )
-        follower_count = followers_web_elt.text.split(" ")[0]  # parses subscriber count
-        follower_counts.append(follower_count)
+        follower_count_unparsed = followers_web_elt.text.split(" ")[
+            0
+        ]  # parses subscriber count
+        follower_counts.append(parse_count(follower_count_unparsed))
 
     driver.quit()
 
