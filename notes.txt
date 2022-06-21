@@ -1,0 +1,5 @@
+cd undergrad\Career Related\EQ Exchange\data_project\venv\Scripts
+
+output: ['37.2M', '6.1K', '24.4M', '148', '7.31M', '5.88M', '1M', '137K']
+
+expected: [68.2M, 37.2M, 6.1K, 24.4M, 148, 7.31M, 5.88M, 1M, 137K]
