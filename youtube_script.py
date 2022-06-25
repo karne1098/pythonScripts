@@ -86,24 +86,24 @@ def full_function(path_to_data_file, path_to_write_to):
     data_array = make_data_array(path_to_data_file)
     site_array = data_array.copy()
     site_array = site_array[1:, 1]  # returns array of sites
-    # print("data array")
-    # print(data_array)
-    # print("site array")
-    # print(site_array)
     driver = webdriver.Chrome()  # makes browser
     driver.implicitly_wait(0.5)
 
     follower_counts = []
     for site in site_array:  # populates follower_counts
-        driver.get(site)
-        followers_web_elt = driver.find_element(  # gets the web element w subscriber count
-            by=By.XPATH,
-            value="/html/body/ytd-app/div[1]/ytd-page-manager/ytd-browse/div[3]/ytd-c4-tabbed-header-renderer/tp-yt-app-header-layout/div/tp-yt-app-header/div[2]/div[2]/div/div[1]/div/div[1]/yt-formatted-string",
-        )
-        follower_count_unparsed = followers_web_elt.text.split(" ")[
-            0
-        ]  # parses subscriber count
-        follower_counts.append(parse_count(follower_count_unparsed))
+        if pd.isna(site):
+            follower_counts.append("")
+        else:
+            driver.get(site)
+            followers_web_elt = driver.find_element(  # gets the web element w subscriber count
+                by=By.XPATH,
+                value="/html/body/ytd-app/div[1]/ytd-page-manager/ytd-browse/div[3]/ytd-c4-tabbed-header-renderer/tp-yt-app-header-layout/div/tp-yt-app-header/div[2]/div[2]/div/div[1]/div/div[1]/yt-formatted-string",
+            )
+            follower_count_unparsed = followers_web_elt.text.split(" ")[
+                0
+            ]  # parses subscriber count
+            follower_count = parse_count(follower_count_unparsed)
+            follower_counts.append(follower_count)
 
     driver.quit()
 
@@ -122,4 +122,4 @@ def full_function(path_to_data_file, path_to_write_to):
     dataframe_filled_subs.to_csv(write_to, index=False, header=False)
 
 
-full_function("you1.csv", "you2.csv")
+full_function("eq artist1.csv", "gnoir_anil youtube filled.csv")
