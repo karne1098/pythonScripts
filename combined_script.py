@@ -130,22 +130,38 @@ def facebook_fc():
             value="/html/body/div[1]/div/div[1]/div/div[3]/div/div/div[1]/div[1]/div/div/div[1]/div[2]/div/div/div/div[3]/div/div/div[2]/span",
         )
     except:
-        followers_web_elt = driver.find_element(  # gets the web element w subscriber count
-            by=By.XPATH,
-            value="/html/body/div[1]/div/div[1]/div/div[3]/div/div/div[1]/div[1]/div[4]/div[2]/div/div[1]/div[2]/div[1]/div/div/div/div[2]/div[4]/div/div/div/div[2]/div/div/span/span",
-        )
+        try:
+            followers_web_elt = driver.find_element(  # gets the web element w subscriber count
+                by=By.XPATH,
+                value="/html/body/div[1]/div/div[1]/div/div[3]/div/div/div[1]/div[1]/div[4]/div[2]/div/div[1]/div[2]/div[1]/div/div/div/div[2]/div[4]/div/div/div/div[2]/div/div/span/span",
+            )
+        except:
+            try:
+                followers_web_elt = driver.find_element(  # gets the web element w subscriber count
+                    by=By.XPATH,
+                    value="/html/body/div[1]/div[2]/div[1]/div/div/div[2]/div[2]/div/div[1]/div/div/div[1]/div/div/div[2]/div/div[1]/div[3]/div/div[2]/div",
+                )
+            except:
+                followers_web_elt = driver.find_element(  # gets the web element w subscriber count
+                    by=By.XPATH,
+                    value="/html/body/div[1]/div/div[1]/div/div[3]/div/div/div[1]/div[1]/div[4]/div[2]/div/div[1]/div[2]/div[1]/div/div/div/div[2]/div[3]/div/div/div/div[2]/div/div/span/span",
+                )
+
     fc_unparsed = followers_web_elt.text.split(" ")[0]
     fc = parse_count(fc_unparsed)
     return fc
 
 
 def youtube_fc():
-    followers_web_elt = driver.find_element(  # gets the web element w subscriber count
-        by=By.XPATH,
-        value="/html/body/ytd-app/div[1]/ytd-page-manager/ytd-browse/div[3]/ytd-c4-tabbed-header-renderer/tp-yt-app-header-layout/div/tp-yt-app-header/div[2]/div[2]/div/div[1]/div/div[1]/yt-formatted-string",
-    )
-    fc_unparsed = followers_web_elt.text.split(" ")[0]  # parses subscriber count
-    fc = parse_count(fc_unparsed)
+    try:
+        followers_web_elt = driver.find_element(  # gets the web element w subscriber count
+            by=By.XPATH,
+            value="/html/body/ytd-app/div[1]/ytd-page-manager/ytd-browse/div[3]/ytd-c4-tabbed-header-renderer/tp-yt-app-header-layout/div/tp-yt-app-header/div[2]/div[2]/div/div[1]/div/div[1]/yt-formatted-string",
+        )
+        fc_unparsed = followers_web_elt.text.split(" ")[0]  # parses subscriber count
+        fc = parse_count(fc_unparsed)
+    except:
+        fc = ""
     return fc
 
 
@@ -230,12 +246,13 @@ def full_function(path_to_data_file, path_to_write_to):
         follower_counts = fill_one_fc(col_to_name[col], site_array)
         filled_data = np.column_stack((filled_data, follower_counts))
 
+    print(filled_data)
     dataframe_filled = pd.DataFrame(filled_data)  # writes to csv
     write_to = Path(path_to_write_to)
     dataframe_filled.to_csv(write_to, index=False, header=titles)
 
 
-full_function("eq subset.csv", "eq subset filled.csv")
+full_function("eq subset large.csv", "eq subset large filled.csv")
 
 
 driver.quit()
